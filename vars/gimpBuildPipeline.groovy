@@ -51,7 +51,7 @@ List<String> projectDependencies(String project, String branch) {
             ]
         ],
         'mypaint-brushes': [
-            'v0.3.x': [
+            'v1.3.x': [
                 '../babl/master',
                 '../gegl/master',
                 '../libmypaint/v1.3.0'
@@ -116,10 +116,12 @@ def call() {
             }
         }
         docker.image('gimp/gimp:latest').inside("${myEnv} -v gimp-git-data:/export:ro") {
-            stage('Copy Dependencies') {
-                for(String dependency : projectDependencies(project, env.BRANCH_NAME)) {
-                    copyArtifacts fingerprintArtifacts: true, flatten: true, projectName: dependency, selector: lastSuccessful()
-                    sh 'mv *.tar.gz /data/'
+            if(!projectDependencies(project, env.BRANCH_NAME)) {
+                stage('Copy Dependencies') {
+                    for(String dependency : projectDependencies(project, env.BRANCH_NAME)) {
+                        copyArtifacts fingerprintArtifacts: true, flatten: true, projectName: dependency, selector: lastSuccessful()
+                        sh 'mv *.tar.gz /data/'
+                    }
                 }
             }
             stage("Build ${getFriendlyName(project)}") {
