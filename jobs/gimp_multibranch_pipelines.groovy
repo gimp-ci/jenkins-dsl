@@ -8,7 +8,7 @@ def generatePipelineJob(String jobName, Map settings) {
     Boolean support_filter_branches = 'branches' in settings
     Boolean support_filter_tags = 'tags' in settings
     String custom_filter = [settings['branches'], settings['tags']].collect { it }.join(' ')
-    multibranchPipelineJob('babl') {
+    this.multibranchPipelineJob(jobName) {
         displayName friendly_name
         description about_job
         branchSources {
@@ -27,7 +27,7 @@ def generatePipelineJob(String jobName, Map settings) {
                                 extension {
                                     shallow false
                                     noTags true
-                                    reference '/export/babl.git'
+                                    reference "/export/${jobName}.git"
                                     timeout 30
                                 }
                             }
