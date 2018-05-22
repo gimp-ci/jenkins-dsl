@@ -107,7 +107,7 @@ def call() {
     //e.g. project = gimp
     String project = env.JOB_NAME.tokenize('/')[0]
     //e.g. -e GIMP_BRANCH=master -e GEGL_BRANCH=master
-    String myEnv = "-e ${project.toUpperCase()}_BRANCH=${env.BRANCH_NAME}" + getDockerEnv(project, env.BRANCH_NAME)
+    String myEnv = "-e ${project.toUpperCase()}_BRANCH=${env.BRANCH_NAME} " + getDockerEnv(project, env.BRANCH_NAME)
     node('master') {
         stage("Environment") {
             docker.image('gimp/gimp:latest').inside("${myEnv} -v gimp-git-data:/export:ro") {
