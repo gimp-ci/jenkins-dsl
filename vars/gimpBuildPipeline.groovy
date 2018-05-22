@@ -74,5 +74,6 @@ def call() {
                 archiveArtifacts artifacts: "${project}/${project}-internal.tar.gz", fingerprint: true, onlyIfSuccessful: true
             }
         }
+        deleteDir()
     }
 }
