@@ -9,7 +9,7 @@
  *
  * The pipeline will select appropriate build scripts depending on the project calling it.
  */
-projectEnvMap = [
+Map projectEnvMap = [
     gimp: [
         master: [
             GEGL_BRANCH: 'master'
