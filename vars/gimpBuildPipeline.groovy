@@ -30,6 +30,15 @@ Map projectEnvMap() {
     ]
 }
 
+@NonCPS
+String getFriendlyName(String name) {
+    [
+        'babl': 'BABL',
+        'gegl': 'GEGL',
+        'gimp': 'GIMP'
+    ].get(name) ?: name
+}
+
 /**
   References the project environment map and converts variables into Docker
   arguments for environment variables.
@@ -53,13 +62,15 @@ def call() {
                 echo "DOCKER ENVIRONMENT:\n    ${environment_string}"
             }
         }
-        stage("Build ${project}") {
-            docker.image('gimp/gimp:latest').inside("${myEnv} -v gimp-git-data:/export:ro") {
+        docker.image('gimp/gimp:latest').inside("${myEnv} -v gimp-git-data:/export:ro") {
+            stage("Build ${getFriendlyName(project)}") {
                 //automatically generated checkout command from pipeline syntax generator
                 checkout poll: false, scm: [$class: 'GitSCM', branches: [[name: 'refs/heads/master']], browser: [$class: 'GithubWeb', repoUrl: 'https://github.com/gimp-ci/docker-jenkins-gimp'], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'ChangelogToBranch', options: [compareRemote: 'origin', compareTarget: 'master']], [$class: 'RelativeTargetDirectory', relativeTargetDir: 'docker-jenkins-gimp']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/gimp-ci/docker-jenkins-gimp']]]
                 //end automatically generated checkout
 
                 sh "bash ./docker-jenkins-gimp/debian-testing/${project}.sh"
+            }
+            stage("Publish artifacts") {
                 archiveArtifacts artifacts: "${project}/${project}-internal.tar.gz", fingerprint: true, onlyIfSuccessful: true
             }
         }
