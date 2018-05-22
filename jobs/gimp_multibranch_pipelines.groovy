@@ -87,7 +87,10 @@ Map multibranch_jobs = [
         name: 'BABL branch builds',
         description: 'Development builds for the <a href="http://gegl.org/babl/">BABL library</a>.',
         branches: 'master'
-    ],
+    ]
+]
+
+/*
     gegl: [
         branches: 'master gegl-0-2'
     ],
@@ -102,7 +105,7 @@ Map multibranch_jobs = [
     gimp: [
         branches: 'master gimp-2-10 gimp-2-8'
     ]
-]
+*/
 
 multibranch_jobs.each { String name, Map settings ->
     String description_addon = '  Source code for this job and build pipeline can be viewed at the <a href="https://github.com/gimp-ci/jenkins-dsl">Jenkins DSL Code</a> repository.'
