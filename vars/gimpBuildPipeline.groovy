@@ -62,19 +62,19 @@ List<String> projectDependencies(String project, String branch) {
                 '../babl/master',
                 '../gegl/master',
                 '../libmypaint/v1.3.0',
-                '../mypaint-brushes/v1-3-x.m3vrt7'
+                '../mypaint-brushes/v1.3.x'
             ],
             'gimp-2-10': [
                 '../babl/master',
                 '../gegl/master',
                 '../libmypaint/v1.3.0',
-                '../mypaint-brushes/v1-3-x.m3vrt7'
+                '../mypaint-brushes/v1.3.x'
             ],
             'gimp-2-8': [
                 '../babl/master',
                 '../gegl/gegl-0-2',
                 '../libmypaint/v1.3.0',
-                '../mypaint-brushes/v1-3-x.m3vrt7'
+                '../mypaint-brushes/v1.3.x'
             ]
         ]
     ].get(project)?.get(branch) ?: []
