@@ -18,10 +18,10 @@ def generatePipelineJob(String jobName, Map settings) {
                         remote job_remote
                         traits {
                             if(support_filter_branches) {
-                                it.branchDiscoveryTrait()
+                                branchDiscoveryTrait()
                             }
                             if(support_filter_tags) {
-                                it.tagDiscoveryTrait()
+                                tagDiscoveryTrait()
                             }
                             headWildcardFilter {
                                 includes custom_filter
