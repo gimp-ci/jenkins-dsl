@@ -85,11 +85,13 @@ def generatePipelineJob(String jobName, Map settings) {
 Map multibranch_jobs = [
     babl: [
         name: 'BABL branch builds',
-        description: 'Development builds for the <a href="">BABL library</a>.',
+        description: 'Development builds for the <a href="http://gegl.org/babl/">BABL library</a>.',
         branches: 'master'
     ]
 ]
 
 multibranch_jobs.each { String name, Map settings ->
+    String description_addon = '  Source code for this job and build pipeline can be viewed at the <a href="https://github.com/gimp-ci/jenkins-dsl">Jenkins DSL Code</a> repository.'
+    settings['description'] = (settings['description']?: '') + description_addon
     generatePipelineJob name, settings
 }
