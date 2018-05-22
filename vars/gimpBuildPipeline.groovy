@@ -9,22 +9,34 @@
  *
  * The pipeline will select appropriate build scripts depending on the project calling it.
  */
-Map projectEnvMap = [
-    gimp: [
-        master: [
-            GEGL_BRANCH: 'master'
-        ],
-        'gimp-2-10': [
-            GEGL_BRANCH: 'master'
-        ],
-        'gimp-2-8': [
-            GEGL_BRANCH: 'gegl-0-2'
+
+/**
+  Does nothing except return a static Map.
+ */
+@NonCPS
+Map projectEnvMap() {
+    [
+        gimp: [
+            master: [
+                GEGL_BRANCH: 'master'
+            ],
+            'gimp-2-10': [
+                GEGL_BRANCH: 'master'
+            ],
+            'gimp-2-8': [
+                GEGL_BRANCH: 'gegl-0-2'
+            ]
         ]
     ]
-]
+}
 
+/**
+  References the project environment map and converts variables into Docker
+  arguments for environment variables.
+ */
+@NonCPS
 String getDockerEnv(String project, branch) {
-    projectEnvMap[project]?.get(branch)?.collect { k, v ->
+    projectEnvMap().get(project)?.get(branch)?.collect { k, v ->
         "-e ${k}=${v}"
     }.join(' ') ?: ''
 }
