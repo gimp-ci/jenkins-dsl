@@ -15,6 +15,7 @@ def generatePipelineJob(String jobName, Map settings) {
             branchSource {
                 source {
                     git {
+                        id 'git-scm'
                         remote job_remote
                         traits {
                             branchDiscoveryTrait()
