@@ -13,7 +13,7 @@
 def call() {
     node('master') {
         stage("Environment") {
-            docker.image('gimp/gimp:latest').withRun("-v gimp-git-data:/export:ro") { c ->
+            docker.image('gimp/gimp:latest').withRun("-e HOME=/home/jenkins -w /home/jenkins -v gimp-git-data:/export:ro") { c ->
                 //environment_string = sh(script: 'env | LC_ALL=C sort | grep -E \'BRANCH|^BUILD_|^JOB_\'', returnStdout: true).split('\n').join('\n    ')
                 environment_string = sh(script: 'env | LC_ALL=C sort', returnStdout: true).split('\n').join('\n    ')
                 echo "ENVIRONMENT:\n    ${environment_string}"
