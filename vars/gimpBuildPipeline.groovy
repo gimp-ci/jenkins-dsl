@@ -13,12 +13,10 @@
 def call() {
     node('master') {
         stage("Environment") {
-            docker.image('gimp/gimp:latest').withRun("-e HOME=/home/jenkins -w /home/jenkins -v gimp-git-data:/export:ro") { container ->
-                container.inside {
-                    //environment_string = sh(script: 'env | LC_ALL=C sort | grep -E \'BRANCH|^BUILD_|^JOB_\'', returnStdout: true).split('\n').join('\n    ')
-                    environment_string = sh(script: 'head /etc/issue;whoami;pwd;env | LC_ALL=C sort', returnStdout: true).split('\n').join('\n    ')
-                    echo "ENVIRONMENT:\n    ${environment_string}"
-                }
+            docker.image('gimp/gimp:latest').inside("-v gimp-git-data:/export:ro") {
+                //environment_string = sh(script: 'env | LC_ALL=C sort | grep -E \'BRANCH|^BUILD_|^JOB_\'', returnStdout: true).split('\n').join('\n    ')
+                environment_string = sh(script: 'head /etc/issue;whoami;pwd;env | LC_ALL=C sort', returnStdout: true).split('\n').join('\n    ')
+                echo "ENVIRONMENT:\n    ${environment_string}"
             }
         }
     }
