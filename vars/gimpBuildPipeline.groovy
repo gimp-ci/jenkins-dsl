@@ -116,7 +116,7 @@ def call() {
             }
         }
         docker.image('gimp/gimp:latest').inside("${myEnv} -v gimp-git-data:/export:ro") {
-            if(!projectDependencies(project, env.BRANCH_NAME)) {
+            if(projectDependencies(project, env.BRANCH_NAME)) {
                 stage('Copy Dependencies') {
                     for(String dependency : projectDependencies(project, env.BRANCH_NAME)) {
                         copyArtifacts fingerprintArtifacts: true, flatten: true, projectName: dependency, selector: lastSuccessful()
