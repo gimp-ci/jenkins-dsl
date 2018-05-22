@@ -2,7 +2,7 @@
  * Generate a multibranch job based on settings.
  */
 def generatePipelineJob(String jobName, Map settings) {
-    String friendly_name = settings['name'] ?: ''
+    String friendly_name = settings['name'] ?: jobName
     String about_job = (settings['description'] ?: '').trim()
     String job_remote  = settings['remote'] ?: "git://git.gnome.org/${jobName}"
     Boolean support_filter_branches = 'branches' in settings
