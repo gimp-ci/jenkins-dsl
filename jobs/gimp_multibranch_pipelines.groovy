@@ -48,16 +48,15 @@ def generatePipelineJob(String jobName, Map settings) {
                                     }
                                 }
                             }
+                            wipeWorkspaceTrait()
                         }
                     }
                 }
             }
         }
         orphanedItemStrategy {
-            defaultOrphanedItemStrategy {
-                pruneDeadBranches false
-                daysToKeepStr '-1'
-                numToKeepStr '30'
+            discardOldItems {
+                numToKeepStr 30
             }
         }
         factory {
