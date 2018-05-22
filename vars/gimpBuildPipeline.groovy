@@ -38,7 +38,7 @@ Map projectEnvMap() {
 String getDockerEnv(String project, branch) {
     projectEnvMap().get(project)?.get(branch)?.collect { k, v ->
         "-e ${k}=${v}"
-    }.join(' ') ?: ''
+    }?.join(' ') ?: ''
 }
 
 def call() {
