@@ -116,7 +116,7 @@ def call() {
             stage('Copy Dependencies') {
                 for(String dependency : projectDependencies(project, env.BRANCH_NAME)) {
                     copyArtifacts fingerprintArtifacts: true, flatten: true, projectName: dependency, selector: lastSuccessful()
-                    sh 'mv *.tar.gz /data'
+                    sh 'mv *.tar.gz /data/'
                 }
             }
             stage("Build ${getFriendlyName(project)}") {
