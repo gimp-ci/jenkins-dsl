@@ -85,7 +85,7 @@ def generatePipelineJob(String jobName, Map settings) {
 Map multibranch_jobs = [
     babl: [
         name: 'BABL branch builds',
-        description: 'Development builds for the <a href="">BABL library</a>.
+        description: 'Development builds for the <a href="">BABL library</a>.',
         branches: 'master'
     ]
 ]
