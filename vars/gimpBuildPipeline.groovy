@@ -38,10 +38,10 @@ List<String> projectDependencies(String project, String branch) {
     [
         gegl: [
             master: [
-                '../babl/master'
+                'babl/master'
             ],
             'gegl-0-2': [
-                '../babl/master'
+                'babl/master'
             ]
         ],
         libmypaint: [
