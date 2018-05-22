@@ -92,9 +92,11 @@ Map multibranch_jobs = [
         branches: 'master gegl-0-2'
     ],
     libmypaint: [
+        remote: 'https://github.com/mypaint/libmypaint'
         tags: 'v1.3.0'
     ],
     'mypaint-brushes': [
+        remote: 'https://github.com/Jehan/mypaint-brushes'
         branches: 'v1.3.x'
     ],
     gimp: [
