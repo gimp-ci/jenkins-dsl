@@ -56,7 +56,7 @@ def generatePipelineJob(String jobName, Map settings) {
         }
         orphanedItemStrategy {
             discardOldItems {
-                numToKeepStr 30
+                numToKeep 30
             }
         }
         factory {
