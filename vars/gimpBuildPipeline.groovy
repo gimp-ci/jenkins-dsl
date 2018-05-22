@@ -10,9 +10,11 @@
  * The pipeline will select appropriate build scripts depending on the project calling it.
  */
 
-node('docker-host') {
-    stage("Environment") {
-        environment_string = sh(script: 'env | LC_ALL=C sort', returnStdout: true).split('\n').join('\n    ')
-        echo "ENVIRONMENT:\n    ${environment_string}"
+def call() {
+    node('docker-host') {
+        stage("Environment") {
+            environment_string = sh(script: 'env | LC_ALL=C sort', returnStdout: true).split('\n').join('\n    ')
+            echo "ENVIRONMENT:\n    ${environment_string}"
+        }
     }
 }
