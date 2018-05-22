@@ -87,6 +87,18 @@ Map multibranch_jobs = [
         name: 'BABL branch builds',
         description: 'Development builds for the <a href="http://gegl.org/babl/">BABL library</a>.',
         branches: 'master'
+    ],
+    gegl: [
+        branches: 'master gegl-0-2'
+    ],
+    libmypaint: [
+        tags: 'v1.3.0'
+    ],
+    'mypaint-brushes': [
+        branches: 'v1.3.x'
+    ],
+    gimp: [
+        branches: 'master gimp-2-10 gimp-2-8'
     ]
 ]
 
