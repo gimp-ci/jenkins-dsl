@@ -115,7 +115,7 @@ def call() {
         docker.image('gimp/gimp:latest').inside("${myEnv} -v gimp-git-data:/export:ro") {
             stage('Copy Dependencies') {
                 for(String dependency : projectDependencies(project, env.BRANCH_NAME)) {
-                    copyArtifacts fingerprintArtifacts: true, flatten: true, projectName: '../foo/bar', selector: lastSuccessful()
+                    copyArtifacts fingerprintArtifacts: true, flatten: true, projectName: dependency, selector: lastSuccessful()
                     sh 'mv *.tar.gz /data'
                 }
             }
