@@ -67,11 +67,6 @@ def generatePipelineJob(String jobName, Map settings) {
         triggers {
             periodic 30
         }
-        configure {
-            def folderConfig = it / 'properties' << 'org.jenkinsci.plugins.pipeline.modeldefinition.config.FolderConfig'
-            folderConfig << dockerLabel('docker-host')
-            folderConfig << registry()
-        }
     }
 }
 
