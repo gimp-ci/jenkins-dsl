@@ -28,7 +28,7 @@ String getDockerEnv(String project, branch) {
 
 def call() {
     //e.g. project = babl
-    String project = env.JOB_NAME.tokenize()[0]
+    String project = env.JOB_NAME.tokenize('/')[0]
     String myEnv = "-e ${project.toUpperCase()}_BRANCH=${env.BRANCH_NAME}"
     node('master') {
         stage("Environment") {
