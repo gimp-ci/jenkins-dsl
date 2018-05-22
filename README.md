@@ -1,9 +1,9 @@
-# jenkins-dsl
+# Jenkins DSL Code
 
-Configuration as code for Jenkins.  This repository contains code to generate
-jobs for [build.gimp.org][ci].
+Configuration as code for [Jenkins][jenkins].  This repository contains code to
+generate and run jobs for [build.gimp.org][ci].
 
-# Jenkins Job DSL
+# Job DSL
 
 Jenkins jobs are tracked in configuration as code in the format of the [Job DSL
 Plugin][job-dsl], a Jenkins plugin designed for this sort of thing.
@@ -47,16 +47,12 @@ The pipeline for [GIMP][gimp] involves the following steps in order:
    `gimp-internal.tar.gz`.
 8. Collect the `gimp-internal.tar.gz` artifact.
 
-
-
-starting the docker container
-[`gimp/gimp:latest`][dhub].
-
 [babl]: http://gegl.org/babl/
 [ci]: https://build.gimp.org/
 [dhub]: https://hub.docker.com/r/gimp/gimp/
 [gegl]: http://gegl.org/
 [gimp]: http://www.gimp.org/
+[jenkins]: https://jenkins.io/
 [job-dsl-api]: https://jenkinsci.github.io/job-dsl-plugin/
 [job-dsl]: https://plugins.jenkins.io/job-dsl
 [libmypaint]: https://github.com/mypaint/libmypaint
