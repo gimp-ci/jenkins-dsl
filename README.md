@@ -34,14 +34,14 @@ library][pipeline-lib].
 The pipeline for [GIMP][gimp] involves the following steps in order:
 
 1. Copy artifacts from [BABL][babl] `master` branch built from source and move
-   into `/export`.
+   into `/data`.
 2. Copy artifacts from [GEGL][gegl] `master` branch built from source and move
-   into `/export`.
+   into `/data`.
 3. Copy artifacts from [libmypaint][libmypaint] tag `v1.3.0` built from source
-   and move into `/export`.
+   and move into `/data`.
 4. Copy artifacts from [mypaint-brushes][mypaint-brushes] branch `v1.3.x` built
-   from source and move into `/export`.
-5. Extract all artifacts located at `/export/*.tar.gz`.
+   from source and move into `/data`.
+5. Extract all artifacts located at `/data/*.tar.gz`.
 6. Build and install GIMP.
 7. Package `/home/jenkins/usr/*` as the GIMP artifact and name it
    `gimp-internal.tar.gz`.
