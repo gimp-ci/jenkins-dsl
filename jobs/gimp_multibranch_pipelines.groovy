@@ -11,7 +11,6 @@ def generatePipelineJob(String jobName, Map settings) {
     this.multibranchPipelineJob(jobName) {
         displayName friendly_name
         description about_job
-        /* use advanced configure block instead
         branchSources {
             branchSource {
                 source {
@@ -19,6 +18,8 @@ def generatePipelineJob(String jobName, Map settings) {
                         id 'git-scm'
                         remote job_remote
                         traits {
+                            gitBranchDiscoveryTrait()
+                            gitTagDiscoveryTrait()
                             headWildcardFilter {
                                 includes custom_filter
                                 excludes ''
@@ -53,7 +54,6 @@ def generatePipelineJob(String jobName, Map settings) {
                 }
             }
         }
-        */
         orphanedItemStrategy {
             discardOldItems {
                 numToKeep 30
@@ -67,6 +67,7 @@ def generatePipelineJob(String jobName, Map settings) {
         triggers {
             periodic 30
         }
+        /* use advanced configure block instead
         //https://issues.jenkins-ci.org/browse/JENKINS-45688 using configure block because branchDiscoveryTrait() and tagDiscoveryTrait() DSL is broken
         configure { node ->
             node / sources(class: 'jenkins.branch.MultiBranchProject$BranchSourceList') / data / 'jenkins.branch.BranchSource' / source(class: 'jenkins.plugins.git.GitSCMSource') {
@@ -111,6 +112,7 @@ def generatePipelineJob(String jobName, Map settings) {
                 }
             }
         }
+        */
     }
 }
 
