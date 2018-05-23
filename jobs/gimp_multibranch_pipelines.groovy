@@ -11,6 +11,7 @@ def generatePipelineJob(String jobName, Map settings) {
     this.multibranchPipelineJob(jobName) {
         displayName friendly_name
         description about_job
+        /* use advanced configure block instead
         branchSources {
             branchSource {
                 source {
@@ -18,8 +19,6 @@ def generatePipelineJob(String jobName, Map settings) {
                         id 'git-scm'
                         remote job_remote
                         traits {
-                            branchDiscoveryTrait()
-                            tagDiscoveryTrait()
                             headWildcardFilter {
                                 includes custom_filter
                                 excludes ''
@@ -54,6 +53,7 @@ def generatePipelineJob(String jobName, Map settings) {
                 }
             }
         }
+        */
         orphanedItemStrategy {
             discardOldItems {
                 numToKeep 30
@@ -66,6 +66,50 @@ def generatePipelineJob(String jobName, Map settings) {
         }
         triggers {
             periodic 30
+        }
+        //https://issues.jenkins-ci.org/browse/JENKINS-45688 using configure block because branchDiscoveryTrait() and tagDiscoveryTrait() DSL is broken
+        configure { node ->
+            node / sources(class: 'jenkins.branch.MultiBranchProject$BranchSourceList') / data / 'jenkins.branch.BranchSource' / source(class: 'jenkins.plugins.git.GitSCMSource') {
+                id 'git-scm'
+                remote job_remote
+                traits {
+                    'jenkins.plugins.git.traits.BranchDiscoveryTrait'()
+                    'jenkins.plugins.git.traits.TagDiscoveryTrait'()
+                    'jenkins.scm.impl.trait.WildcardSCMHeadFilterTrait' {
+                        includes custom_filter
+                        excludes()
+                    }
+                    'jenkins.plugins.git.traits.CloneOptionTrait' {
+                        extension(class: 'hudson.plugins.git.extensions.impl.CloneOption') {
+                            shallow false
+                            noTags true
+                            reference "/export/${jobName}.git"
+                            timeout 30
+                            depth 1
+                            honorRefspec false
+                        }
+                    }
+                    if(support_filter_branches || support_filter_tags) {
+                        'jenkins.plugins.git.traits.RefSpecsSCMSourceTrait' {
+                            templates {
+                                if(support_filter_branches) {
+                                    'jenkins.plugins.git.traits.RefSpecsSCMSourceTrait_-RefSpecTemplate' {
+                                        value '+refs/heads/*:refs/remotes/@{remote}/*'
+                                    }
+                                }
+                                if(support_filter_tags) {
+                                    'jenkins.plugins.git.traits.RefSpecsSCMSourceTrait_-RefSpecTemplate' {
+                                        value '+refs/tags/*:refs/tags/*'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    'jenkins.plugins.git.traits.WipeWorkspaceTrait' {
+                        extension(class: 'hudson.plugins.git.extensions.impl.WipeWorkspace')
+                    }
+                }
+            }
         }
     }
 }
