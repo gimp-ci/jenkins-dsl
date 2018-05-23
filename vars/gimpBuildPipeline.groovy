@@ -115,10 +115,10 @@ def call() {
                 //grep_expr = 'BRANCH|^BUILD_|^JOB_|PATH|^DEBIAN_FRONTEND|^PREFIX|ACLOCAL_FLAGS|^PWD'
                 //environment_string = sh(script: "env | LC_ALL=C sort | grep -E \'${grep_expr}\'", returnStdout: true).split('\n').join('\n    ')
                 echo "DOCKER ENVIRONMENT:\n    ${environment_string}"
-            }
-            //check out project to subdirectory
-            dir(project) {
-                checkout scm
+                //check out project to subdirectory within container because of /export
+                dir(project) {
+                    checkout scm
+                }
             }
         }
         docker.image('gimp/gimp:latest').inside("${myEnv} -v gimp-git-data:/export:ro") {
