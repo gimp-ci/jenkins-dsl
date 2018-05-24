@@ -110,6 +110,7 @@ def call() {
     String project = env.JOB_NAME.tokenize('/')[0]
     //e.g. -e GIMP_BRANCH=master -e GEGL_BRANCH=master
     String myEnv = "-e ${project.toUpperCase()}_BRANCH=${env.BRANCH_NAME} " + getDockerEnv(project, env.BRANCH_NAME)
+    String reference_repo = "${Jenkins.instance.root}/export/${project}.git"
     node('master') {
         stage("Environment") {
             docker.image('gimp/gimp:latest').inside("${myEnv}") {
@@ -137,8 +138,12 @@ def call() {
                 |update_cached_scm "docker-jenkins-gimp" "https://github.com/gimp-ci/docker-jenkins-gimp"
                 |update_cached_scm "${project}" "${scm.userRemoteConfigs[0].url}"
                """.stripMargin().trim()
+                //check out project to subdirectory for build
+                dir(project) {
+                    checkout scm
+                }
         }
-        docker.image('gimp/gimp:latest').inside("${myEnv}") {
+        docker.image('gimp/gimp:latest').inside("${myEnv} -v ${reference_repo}:${reference_repo}:ro") {
             if(projectDependencies(project, env.BRANCH_NAME)) {
                 stage('Copy Dependencies') {
                     for(String dependency : projectDependencies(project, env.BRANCH_NAME)) {
@@ -148,10 +153,6 @@ def call() {
                 }
             }
             stage("Build ${getFriendlyName(project)}") {
-                //check out project to subdirectory for build
-                dir(project) {
-                    checkout scm
-                }
                 //automatically generated checkout command from pipeline syntax generator
                 checkout poll: false, scm: [$class: 'GitSCM', branches: [[name: 'refs/heads/master']], browser: [$class: 'GithubWeb', repoUrl: 'https://github.com/gimp-ci/docker-jenkins-gimp'], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'ChangelogToBranch', options: [compareRemote: 'origin', compareTarget: 'master']], [$class: 'RelativeTargetDirectory', relativeTargetDir: 'docker-jenkins-gimp'], [$class: 'CloneOption', depth: 0, noTags: true, reference: "${Jenkins.instance.root}/export/docker-jenkins-gimp.git", shallow: false]], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/gimp-ci/docker-jenkins-gimp']]]
                 //end automatically generated checkout
