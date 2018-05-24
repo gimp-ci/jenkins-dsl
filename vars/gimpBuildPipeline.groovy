@@ -114,6 +114,12 @@ def call() {
     node('master') {
         stage("Environment") {
             docker.image('gimp/gimp:latest').inside("${myEnv}") {
+                sh '''
+                    |head -n1 /etc/issue
+                    |id
+                    |uname -rms
+                    |bash --version | head -n1
+                   '''.stripMargin().trim()
                 environment_string = sh(script: 'env | LC_ALL=C sort', returnStdout: true).split('\n').join('\n    ')
                 //grep_expr = 'BRANCH|^BUILD_|^JOB_|PATH|^DEBIAN_FRONTEND|^PREFIX|ACLOCAL_FLAGS|^PWD'
                 //environment_string = sh(script: "env | LC_ALL=C sort | grep -E \'${grep_expr}\'", returnStdout: true).split('\n').join('\n    ')
