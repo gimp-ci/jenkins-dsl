@@ -121,6 +121,7 @@ def call() {
         }
         stage("Update git cache") {
             sh """
+                |#!/bin/bash
                 |echo 'Updating local git cache for faster checkouts'
                 |function update_cached_scm {
                 |    name="\$1"
