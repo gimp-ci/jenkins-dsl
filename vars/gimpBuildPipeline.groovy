@@ -122,7 +122,7 @@ def call() {
         stage("Update git cache") {
             sh """
                 |echo 'Updating local git cache for faster checkouts'
-                |function update_cached_scm() (
+                |function update_cached_scm() {
                 |    name="\$1"
                 |    repoUrl="\$2"
                 |    localRepo="${Jenkins.instance.root}/export/\${name}.git"
@@ -131,7 +131,7 @@ def call() {
                 |    fi
                 |    cd "\${localRepo}"
                 |    git remote update --prune
-                |)
+                |}
                 |set -exo pipefail
                 |update_cached_scm "docker-jenkins-gimp" "https://github.com/gimp-ci/docker-jenkins-gimp"
                 |update_cached_scm "${project}" "${scm.userRemoteConfigs[0].url}"
