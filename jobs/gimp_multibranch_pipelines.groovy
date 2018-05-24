@@ -10,7 +10,7 @@ import jenkins.model.Jenkins
 def generatePipelineJob(String jobName, Map settings) {
     String friendly_name = settings['name'] ?: jobName
     String about_job = (settings['description'] ?: '').trim()
-    String job_remote  = settings['remote'] ?: "git://git.gnome.org/${jobName}"
+    String job_remote  = settings['remote'] ?: "https://gitlab.gnome.org/GNOME/${jobName}"
     Boolean support_filter_branches = 'branches' in settings
     Boolean support_filter_tags = 'tags' in settings
     String custom_filter = [settings['branches'], settings['tags']].findAll { it }.join(' ')
