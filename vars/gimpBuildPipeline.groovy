@@ -127,7 +127,7 @@ def call() {
                 |    name="\$1"
                 |    repoUrl="\$2"
                 |    localRepo="${Jenkins.instance.root}/export/\${name}.git"
-                |    if [ ! "\${localRepo}" ]; then
+                |    if [ ! -d "\${localRepo}" ]; then
                 |        git clone --mirror "\${repoUrl}" "\${localRepo}"
                 |    fi
                 |    cd "\${localRepo}"
