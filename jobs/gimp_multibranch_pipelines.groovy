@@ -83,27 +83,46 @@ def generatePipelineJob(String jobName, Map settings) {
 Map multibranch_jobs = [
     babl: [
         name: 'BABL branch builds',
-        description: 'Development builds for the <a href="http://gegl.org/babl/">BABL library</a>.',
+        description: '<p>Development builds for the <a href="http://gegl.org/babl/">BABL library</a>.  This project is a dependency of <a href="/job/gimp">GIMP</a>.</p>',
         branches: 'master'
     ],
     gegl: [
+        name: 'GEGL branch builds',
+        description: '<p>Development builds for the <a href="http://gegl.org/">GEGL library</a>.  This project is a dependency of <a href="/job/gimp">GIMP</a>.</p>',
         branches: 'master gegl-0-2'
     ],
     libmypaint: [
+        description: '<p>Development builds for the <a href="https://github.com/mypaint/libmypaint/tree/v1.3.0">libmypaint library</a>.  Specifically libmypaint git tag v1.3.0.  This project is a dependency of <a href="/job/gimp">GIMP</a>.</p>',
         remote: 'https://github.com/mypaint/libmypaint',
         tags: 'v1.3.0'
     ],
     'mypaint-brushes': [
+        description: '<p>Development builds for the <a href="https://github.com/Jehan/mypaint-brushes/tree/v1.3.x">mypaint-brushes library</a>.  Specifically mypaint-brushes git branch v1.3.x.  This project is a dependency of <a href="/job/gimp">GIMP</a>.</p>',
         remote: 'https://github.com/Jehan/mypaint-brushes',
         branches: 'v1.3.x'
     ],
     gimp: [
+        name: 'GIMP branch builds',
+        description: '''
+<p>Development builds for <a href="http://www.gimp.org/">GIMP</a> (GNU Image Manipulation Program).</p>
+<p>This project depends on the following projects:</p>
+<ul>
+    <li><a href="/job/babl">BABL</a></li>
+    <li><a href="/job/gegl">GEGL</a></li>
+    <li><a href="/job/libmypaint">libmypaint</a></li>
+    <li><a href="/job/mypaint-brushes">mypaint-brushes</a></li>
+</ul>
+''',
         branches: 'master gimp-2-10 gimp-2-8'
     ]
 ]
 
 multibranch_jobs.each { String name, Map settings ->
-    String description_addon = '  Source code for this job and build pipeline can be viewed at the <a href="https://github.com/gimp-ci/jenkins-dsl">Jenkins DSL Code</a> repository.'
-    settings['description'] = (settings['description']?: '') + description_addon
+    String about_project = '<h1>About ths project</h1>\n\n'
+    String description_addon = '\n\n' + '''
+<p>Source code for this job and build pipeline can be viewed at the <a href="https://github.com/gimp-ci/jenkins-dsl">Jenkins DSL Code</a> repository.</p>
+<h1>Rendered pipeline</h1>
+'''.trim()
+    settings['description'] = about_project + (settings['description']?: '') + description_addon
     generatePipelineJob name, settings
 }
