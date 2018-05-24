@@ -134,7 +134,7 @@ def call() {
                 |)
                 |set -exo pipefail
                 |update_cached_scm "docker-jenkins-gimp" "https://github.com/gimp-ci/docker-jenkins-gimp"
-                |update_cached_scm "${product}" "${scm.userRemoteConfigs[0].url}"
+                |update_cached_scm "${project}" "${scm.userRemoteConfigs[0].url}"
                """.stripMargin()
         }
         docker.image('gimp/gimp:latest').inside("${myEnv}") {
