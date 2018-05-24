@@ -120,6 +120,7 @@ def call() {
             }
         }
         stage("Update git cache") {
+            echo scm.userRemoteConfigs[0].url
             sh """
                 |echo 'Updating local git cache for faster checkouts'
                 |function update_cached_scm() {
