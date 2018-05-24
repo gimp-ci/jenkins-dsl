@@ -118,10 +118,11 @@ Map multibranch_jobs = [
 ]
 
 multibranch_jobs.each { String name, Map settings ->
-    String about_project = '<h1>About ths project</h1>\n\n'
+    String about_project = '<h1>About this project</h1>\n\n'
     String description_addon = '\n\n' + '''
 <p>Source code for this job and build pipeline can be viewed at the <a href="https://github.com/gimp-ci/jenkins-dsl">Jenkins DSL Code</a> repository.</p>
 <h1>Rendered pipeline</h1>
+<p>To see a beautifully rendered build pipeline for this project click the "Open with Blue Ocean" link to the left.  It is the next generating user interface for Jenkins.</a>
 '''.trim()
     settings['description'] = about_project + (settings['description']?: '') + description_addon
     generatePipelineJob name, settings
