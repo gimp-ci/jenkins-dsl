@@ -1,5 +1,11 @@
 /*
- * Generate a multibranch job based on settings.
+ * This script is for Generating core jobs related to building GIMP.
+ */
+
+import jenkins.model.Jenkins
+
+/*
+   Generate a multibranch job based on settings.
  */
 def generatePipelineJob(String jobName, Map settings) {
     String friendly_name = settings['name'] ?: jobName
@@ -29,7 +35,7 @@ def generatePipelineJob(String jobName, Map settings) {
                                 extension {
                                     shallow false
                                     noTags true
-                                    reference "/export/${jobName}.git"
+                                    reference "${Jenkins.instance.root}/export/${jobName}.git"
                                     timeout 30
                                 }
                             }

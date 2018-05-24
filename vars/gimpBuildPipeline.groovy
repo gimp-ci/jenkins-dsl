@@ -10,6 +10,8 @@
  * The pipeline will select appropriate build scripts depending on the project calling it.
  */
 
+import jenkins.model.Jenkins
+
 /**
   Does nothing except return a static Map.
  */
@@ -110,18 +112,32 @@ def call() {
     String myEnv = "-e ${project.toUpperCase()}_BRANCH=${env.BRANCH_NAME} " + getDockerEnv(project, env.BRANCH_NAME)
     node('master') {
         stage("Environment") {
-            docker.image('gimp/gimp:latest').inside("${myEnv} -v gimp-git-data:/export:ro") {
+            docker.image('gimp/gimp:latest').inside("${myEnv}") {
                 environment_string = sh(script: 'env | LC_ALL=C sort', returnStdout: true).split('\n').join('\n    ')
                 //grep_expr = 'BRANCH|^BUILD_|^JOB_|PATH|^DEBIAN_FRONTEND|^PREFIX|ACLOCAL_FLAGS|^PWD'
                 //environment_string = sh(script: "env | LC_ALL=C sort | grep -E \'${grep_expr}\'", returnStdout: true).split('\n').join('\n    ')
                 echo "DOCKER ENVIRONMENT:\n    ${environment_string}"
-                //check out project to subdirectory within container because of /export
-                dir(project) {
-                    checkout scm
-                }
             }
         }
-        docker.image('gimp/gimp:latest').inside("${myEnv} -v gimp-git-data:/export:ro") {
+        stage("Update git cache") {
+            sh """
+                |echo 'Updating local git cache for faster checkouts'
+                |function update_cached_scm() (
+                |    name="\$1"
+                |    repoUrl="\$2"
+                |    localRepo="${Jenkins.instance.root}/export/\${name}.git"
+                |    if [ ! "\${localRepo}" ]; then
+                |        git clone --mirror "\${repoUrl}" "\${localRepo}"
+                |    fi
+                |    cd "\${localRepo}"
+                |    git remote update --prune
+                |)
+                |set -exo pipefail
+                |update_cached_scm "docker-jenkins-gimp" "https://github.com/gimp-ci/docker-jenkins-gimp"
+                |update_cached_scm "${product}" "${scm.userRemoteConfigs[0].url}"
+               """.stripMargin()
+        }
+        docker.image('gimp/gimp:latest').inside("${myEnv}") {
             if(projectDependencies(project, env.BRANCH_NAME)) {
                 stage('Copy Dependencies') {
                     for(String dependency : projectDependencies(project, env.BRANCH_NAME)) {
@@ -131,8 +147,12 @@ def call() {
                 }
             }
             stage("Build ${getFriendlyName(project)}") {
+                //check out project to subdirectory for build
+                dir(project) {
+                    checkout scm
+                }
                 //automatically generated checkout command from pipeline syntax generator
-                checkout poll: false, scm: [$class: 'GitSCM', branches: [[name: 'refs/heads/master']], browser: [$class: 'GithubWeb', repoUrl: 'https://github.com/gimp-ci/docker-jenkins-gimp'], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'ChangelogToBranch', options: [compareRemote: 'origin', compareTarget: 'master']], [$class: 'RelativeTargetDirectory', relativeTargetDir: 'docker-jenkins-gimp']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/gimp-ci/docker-jenkins-gimp']]]
+                checkout poll: false, scm: [$class: 'GitSCM', branches: [[name: 'refs/heads/master']], browser: [$class: 'GithubWeb', repoUrl: 'https://github.com/gimp-ci/docker-jenkins-gimp'], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'ChangelogToBranch', options: [compareRemote: 'origin', compareTarget: 'master']], [$class: 'RelativeTargetDirectory', relativeTargetDir: 'docker-jenkins-gimp'], [$class: 'CloneOption', depth: 0, noTags: true, reference: "${Jenkins.instance.root}/export/docker-jenkins-gimp.git", shallow: false]], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/gimp-ci/docker-jenkins-gimp']]]
                 //end automatically generated checkout
 
                 sh "bash ./docker-jenkins-gimp/debian-testing/${project}.sh"
