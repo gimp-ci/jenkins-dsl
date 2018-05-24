@@ -136,7 +136,7 @@ def call() {
                 |set -exo pipefail
                 |update_cached_scm "docker-jenkins-gimp" "https://github.com/gimp-ci/docker-jenkins-gimp"
                 |update_cached_scm "${project}" "${scm.userRemoteConfigs[0].url}"
-               """.stripMargin()
+               """.stripMargin().trim()
         }
         docker.image('gimp/gimp:latest').inside("${myEnv}") {
             if(projectDependencies(project, env.BRANCH_NAME)) {
