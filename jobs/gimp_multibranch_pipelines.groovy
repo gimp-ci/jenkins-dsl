@@ -24,9 +24,9 @@ def generatePipelineJob(String jobName, Map settings) {
                         id 'git-scm'
                         remote job_remote
                         traits {
-                            //gitBranchDiscoveryTrait and gitTagDiscoveryTrait relies on unstable DSL.  See https://github.com/gimp-ci/jenkins-dsl/issues/1
-                            gitBranchDiscoveryTrait()
-                            gitTagDiscoveryTrait()
+                            //gitBranchDiscovery and gitTagDiscovery relies on unstable DSL.  See https://github.com/gimp-ci/jenkins-dsl/issues/1
+                            gitBranchDiscovery()
+                            gitTagDiscovery()
                             headWildcardFilter {
                                 includes custom_filter
                                 excludes ''
