@@ -127,27 +127,29 @@ def call() {
             }
         }
         stage("Update git cache") {
-            sh """
-                |#!/bin/bash
-                |echo 'Updating local git cache for faster checkouts'
-                |function update_cached_scm {
-                |    name="\$1"
-                |    repoUrl="\$2"
-                |    localRepo="${Jenkins.instance.root}/export/\${name}.git"
-                |    if [ ! -d "\${localRepo}" ]; then
-                |        git clone --mirror "\${repoUrl}" "\${localRepo}"
-                |    fi
-                |    cd "\${localRepo}"
-                |    git remote update --prune
-                |}
-                |set -exo pipefail
-                |update_cached_scm "docker-jenkins-gimp" "https://github.com/gimp-ci/docker-jenkins-gimp"
-                |update_cached_scm "${project}" "${scm.userRemoteConfigs[0].url}"
-               """.stripMargin().trim()
-                //check out project to subdirectory for build
-                dir(project) {
-                    checkout scm
-                }
+            lock('update-git-cache') {
+                sh """
+                    |#!/bin/bash
+                    |echo 'Updating local git cache for faster checkouts'
+                    |function update_cached_scm {
+                    |    name="\$1"
+                    |    repoUrl="\$2"
+                    |    localRepo="${Jenkins.instance.root}/export/\${name}.git"
+                    |    if [ ! -d "\${localRepo}" ]; then
+                    |        git clone --mirror "\${repoUrl}" "\${localRepo}"
+                    |    fi
+                    |    cd "\${localRepo}"
+                    |    git remote update --prune
+                    |}
+                    |set -exo pipefail
+                    |update_cached_scm "docker-jenkins-gimp" "https://github.com/gimp-ci/docker-jenkins-gimp"
+                    |update_cached_scm "${project}" "${scm.userRemoteConfigs[0].url}"
+                   """.stripMargin().trim()
+            }
+            //check out project to subdirectory for build
+            dir(project) {
+                checkout scm
+            }
         }
         docker.image('gimp/gimp:latest').inside("${myEnv} -v ${reference_repo}:${reference_repo}:ro") {
             if(projectDependencies(project, env.BRANCH_NAME)) {
