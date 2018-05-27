@@ -72,7 +72,7 @@ def generatePipelineJob(String jobName, Map settings) {
             }
         }
         triggers {
-            periodic 30
+            periodic 1440
         }
     }
 }
