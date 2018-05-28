@@ -169,7 +169,10 @@ def call() {
                 }
             }
             stage("Publish artifacts") {
-                archiveArtifacts artifacts: "${project}/${project}-internal.tar.gz,**/test-suite.log", fingerprint: true, onlyIfSuccessful: false
+                //archive artifacts relative to project directory
+                dir(project) {
+                    archiveArtifacts artifacts: "${project}/${project}-internal.tar.gz,**/test-suite.log", fingerprint: true, onlyIfSuccessful: false
+                }
             }
         }
         deleteDir()
