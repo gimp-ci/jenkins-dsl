@@ -171,7 +171,7 @@ def call() {
             stage("Publish artifacts") {
                 //archive artifacts relative to project directory
                 dir(project) {
-                    archiveArtifacts artifacts: "${project}/${project}-internal.tar.gz,**/test-suite.log", fingerprint: true, onlyIfSuccessful: false
+                    archiveArtifacts artifacts: "${project}-internal.tar.gz,**/test-suite.log", fingerprint: true, onlyIfSuccessful: false
                 }
             }
         }
