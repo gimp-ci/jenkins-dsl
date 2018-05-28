@@ -160,12 +160,11 @@ def call() {
                     }
                 }
             }
-            stage("Build ${getFriendlyName(project)}") {
-                //automatically generated checkout command from pipeline syntax generator
-                checkout poll: false, scm: [$class: 'GitSCM', branches: [[name: 'refs/heads/master']], browser: [$class: 'GithubWeb', repoUrl: 'https://github.com/gimp-ci/docker-jenkins-gimp'], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'ChangelogToBranch', options: [compareRemote: 'origin', compareTarget: 'master']], [$class: 'RelativeTargetDirectory', relativeTargetDir: 'docker-jenkins-gimp'], [$class: 'CloneOption', depth: 0, noTags: true, reference: "${Jenkins.instance.root}/export/docker-jenkins-gimp.git", shallow: false]], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/gimp-ci/docker-jenkins-gimp']]]
-                //end automatically generated checkout
-
-                catchError {
+            catchError {
+                stage("Build ${getFriendlyName(project)}") {
+                    //automatically generated checkout command from pipeline syntax generator
+                    checkout poll: false, scm: [$class: 'GitSCM', branches: [[name: 'refs/heads/master']], browser: [$class: 'GithubWeb', repoUrl: 'https://github.com/gimp-ci/docker-jenkins-gimp'], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'ChangelogToBranch', options: [compareRemote: 'origin', compareTarget: 'master']], [$class: 'RelativeTargetDirectory', relativeTargetDir: 'docker-jenkins-gimp'], [$class: 'CloneOption', depth: 0, noTags: true, reference: "${Jenkins.instance.root}/export/docker-jenkins-gimp.git", shallow: false]], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/gimp-ci/docker-jenkins-gimp']]]
+                    //end automatically generated checkout
                     sh "bash ./docker-jenkins-gimp/debian-testing/${project}.sh"
                 }
             }
