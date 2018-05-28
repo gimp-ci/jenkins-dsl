@@ -55,6 +55,16 @@ def generatePipelineJob(String jobName, Map settings) {
                                     }
                                 }
                             }
+                            if(job_remote.startsWith('https://gitlab')) {
+                                gitBrowserSCMSourceTrait {
+                                    browser {
+                                        gitLab {
+                                            repoUrl job_remote
+                                            version '10.8'
+                                        }
+                                    }
+                                }
+                            }
                             wipeWorkspaceTrait()
                         }
                     }
