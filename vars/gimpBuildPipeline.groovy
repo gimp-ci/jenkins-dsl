@@ -168,7 +168,7 @@ def call() {
                 sh "bash ./docker-jenkins-gimp/debian-testing/${project}.sh"
             }
             stage("Publish artifacts") {
-                archiveArtifacts artifacts: "${project}/${project}-internal.tar.gz", fingerprint: true, onlyIfSuccessful: true
+                archiveArtifacts artifacts: "${project}/${project}-internal.tar.gz,**/test-suite.log", fingerprint: true, onlyIfSuccessful: true
             }
         }
         deleteDir()
