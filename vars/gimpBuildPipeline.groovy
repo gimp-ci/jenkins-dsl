@@ -165,7 +165,9 @@ def call() {
                 checkout poll: false, scm: [$class: 'GitSCM', branches: [[name: 'refs/heads/master']], browser: [$class: 'GithubWeb', repoUrl: 'https://github.com/gimp-ci/docker-jenkins-gimp'], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'ChangelogToBranch', options: [compareRemote: 'origin', compareTarget: 'master']], [$class: 'RelativeTargetDirectory', relativeTargetDir: 'docker-jenkins-gimp'], [$class: 'CloneOption', depth: 0, noTags: true, reference: "${Jenkins.instance.root}/export/docker-jenkins-gimp.git", shallow: false]], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/gimp-ci/docker-jenkins-gimp']]]
                 //end automatically generated checkout
 
-                sh "bash ./docker-jenkins-gimp/debian-testing/${project}.sh"
+                catchError {
+                    sh "bash ./docker-jenkins-gimp/debian-testing/${project}.sh"
+                }
             }
             stage("Publish artifacts") {
                 archiveArtifacts artifacts: "${project}/${project}-internal.tar.gz,**/test-suite.log", fingerprint: true, onlyIfSuccessful: true
