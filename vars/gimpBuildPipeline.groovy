@@ -155,8 +155,8 @@ def call() {
             if(projectDependencies(project, env.BRANCH_NAME)) {
                 stage('Copy Dependencies') {
                     for(String dependency : projectDependencies(project, env.BRANCH_NAME)) {
-                        copyArtifacts fingerprintArtifacts: true, flatten: true, projectName: dependency, selector: lastSuccessful()
-                        sh 'mv *.tar.gz /data/'
+                        copyArtifacts filter: '**/*-internal.tar.gz', fingerprintArtifacts: true, flatten: true, projectName: dependency, selector: lastSuccessful()
+                        sh 'mv *-internal.tar.gz /data/'
                     }
                 }
             }
@@ -165,15 +165,18 @@ def call() {
                     //automatically generated checkout command from pipeline syntax generator
                     checkout poll: false, scm: [$class: 'GitSCM', branches: [[name: 'refs/heads/master']], browser: [$class: 'GithubWeb', repoUrl: 'https://github.com/gimp-ci/docker-jenkins-gimp'], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'ChangelogToBranch', options: [compareRemote: 'origin', compareTarget: 'master']], [$class: 'RelativeTargetDirectory', relativeTargetDir: 'docker-jenkins-gimp'], [$class: 'CloneOption', depth: 0, noTags: true, reference: "${Jenkins.instance.root}/export/docker-jenkins-gimp.git", shallow: false]], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/gimp-ci/docker-jenkins-gimp']]]
                     //end automatically generated checkout
-                    sh "bash ./docker-jenkins-gimp/debian-testing/${project}.sh"
+                    sh "SKIP_MAKE_CHECK=1 bash ./docker-jenkins-gimp/debian-testing/${project}.sh"
                 }
             }
             if(project in ['babl', 'gegl', 'gimp']) {
                 catchError {
+                    stage("Test ${getFriendlyName(project)}") {
+                        sh "SKIP_MAKE_BUILD=1 bash ./docker-jenkins-gimp/debian-testing/${project}.sh"
+                    }
+                }
+                catchError {
                     stage("${getFriendlyName(project)} distcheck") {
-                        dir(project) {
-                            sh "make distcheck"
-                        }
+                        sh "SKIP_MAKE_BUILD=1 SKIP_MAKE_CHECK=1 INCLUDE_DISTCHECK=1 bash ./docker-jenkins-gimp/debian-testing/${project}.sh"
                     }
                 }
             }
