@@ -168,10 +168,19 @@ def call() {
                     sh "bash ./docker-jenkins-gimp/debian-testing/${project}.sh"
                 }
             }
+            if(project in ['babl', 'gegl', 'gimp']) {
+                catchError {
+                    stage("${getFriendlyName(project)} distcheck") {
+                        dir(project) {
+                            sh "make distcheck"
+                        }
+                    }
+                }
+            }
             stage("Publish artifacts") {
                 //archive artifacts relative to project directory
                 dir(project) {
-                    archiveArtifacts artifacts: "${project}-internal.tar.gz,**/test-suite.log", fingerprint: true, onlyIfSuccessful: false
+                    archiveArtifacts artifacts: "${project}-internal.tar.gz,*.tar.bz2,**/test-suite.log", fingerprint: true, onlyIfSuccessful: false
                 }
             }
         }
