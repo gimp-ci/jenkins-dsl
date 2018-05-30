@@ -183,7 +183,12 @@ def call() {
             stage("Publish artifacts") {
                 //archive artifacts relative to project directory
                 dir(project) {
-                    archiveArtifacts artifacts: "${project}-internal.tar.gz,*.tar.bz2,**/test-suite.log", fingerprint: true, onlyIfSuccessful: false
+                    if(project == 'gegl') {
+                        archiveArtifacts artifacts: "${project}-internal.tar.gz,*.tar.bz2,**/test-suite.log,tests/mipmap/*.png", fingerprint: true, onlyIfSuccessful: false
+                    }
+                    else {
+                        archiveArtifacts artifacts: "${project}-internal.tar.gz,*.tar.bz2,**/test-suite.log", fingerprint: true, onlyIfSuccessful: false
+                    }
                 }
             }
         }
