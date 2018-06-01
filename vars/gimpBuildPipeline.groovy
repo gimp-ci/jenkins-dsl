@@ -103,6 +103,15 @@ String getDockerEnv(String project, branch) {
 }
 
 /**
+  Check to see if a dependency is ready.  Only used during first time build on
+  a new Jenkins instance.
+ */
+@NonCPS
+Boolean isDependentBuildReady(String dependency) {
+    Jenkins.instance.getItemByFullName(dependency)?.lastSuccessfulBuild ? true : false
+}
+
+/**
   This is the main execution.
  */
 def call() {
@@ -111,6 +120,13 @@ def call() {
     //e.g. -e GIMP_BRANCH=master -e GEGL_BRANCH=master
     String myEnv = "-e ${project.toUpperCase()}_BRANCH=${env.BRANCH_NAME} " + getDockerEnv(project, env.BRANCH_NAME)
     String reference_repo = "${Jenkins.instance.root}/export/${project}.git"
+    if(Integer.parseInt(env.BUILD_NUMBER) == 1) {
+        //wait for dependent builds to finish when Jenkins is bootstrapped for the first time
+        while(false in projectDependencies(project, env.BRANCH_NAME).collect { isDependentBuildReady(it) }) {
+            echo "Waiting on first build of ${projectDependencies(project, env.BRANCH_NAME).find { !isDependentBuildReady(it) }}."
+            sleep 60
+        }
+    }
     node('master') {
         stage("Environment") {
             docker.image('gimp/gimp:latest').inside("${myEnv}") {
@@ -168,7 +184,7 @@ def call() {
                     sh "SKIP_MAKE_CHECK=1 bash ./docker-jenkins-gimp/debian-testing/${project}.sh"
                 }
             }
-            if(project in ['babl', 'gegl', 'gimp']) {
+            if((project in ['babl', 'gegl', 'gimp']) && Integer.parseInt(env.BUILD_NUMBER) > 1) {
                 catchError {
                     stage("Test ${getFriendlyName(project)}") {
                         sh "SKIP_MAKE_BUILD=1 bash ./docker-jenkins-gimp/debian-testing/${project}.sh"
